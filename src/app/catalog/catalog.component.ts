@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 
-import { DataRepositoryService } from '../services/data-repository.service';
 import { IClass } from './class.model';
+import { CatalogRepositoryService } from './catalog-repository.service';
+import { UserRepositoryService } from '../services/user-repository.service';
 
 @Component({
   styleUrls: ['./catalog.component.css'],
@@ -11,10 +12,13 @@ export class CatalogComponent {
   classes: IClass[] = [];
   visibleClasses: IClass[] = [];
 
-  constructor(public dataRepository: DataRepositoryService) {}
+  constructor(
+    public userRepository: UserRepositoryService,
+    private catalogRepository: CatalogRepositoryService
+  ) {}
 
   ngOnInit() {
-    this.dataRepository.getCatalog().subscribe((classes: IClass[]) => {
+    this.catalogRepository.getCatalog().subscribe((classes: IClass[]) => {
       this.classes = classes;
       this.applyFilter('');
     });
@@ -22,7 +26,7 @@ export class CatalogComponent {
 
   enroll(classToEnroll: IClass) {
     classToEnroll.processing = true;
-    this.dataRepository.enroll(classToEnroll.classId).subscribe({
+    this.userRepository.enroll(classToEnroll.classId).subscribe({
       error: (err) => {
         console.error(err);
         classToEnroll.processing = false;
@@ -36,7 +40,7 @@ export class CatalogComponent {
 
   drop(classToDrop: IClass) {
     classToDrop.processing = true;
-    this.dataRepository.drop(classToDrop.classId).subscribe({
+    this.userRepository.drop(classToDrop.classId).subscribe({
       error: (err) => {
         console.error(err);
         classToDrop.processing = false;
@@ -55,16 +59,19 @@ export class CatalogComponent {
     }
 
     if (filter === 'GEN') {
-      this.visibleClasses = this.classes.filter(
-        (c) =>
-          !c.course.courseNumber.startsWith('CH') &&
-          !c.course.courseNumber.startsWith('PO') &&
-          !c.course.courseNumber.startsWith('SP')
-      );
+      this.showOnlyGeneralCourses();
     } else {
       this.visibleClasses = this.classes.filter((c) =>
         c.course.courseNumber.startsWith(filter)
       );
     }
+  }
+
+  private showOnlyGeneralCourses() {
+    this.visibleClasses = this.classes.filter(
+      (c) => !c.course.courseNumber.startsWith('CH') &&
+        !c.course.courseNumber.startsWith('PO') &&
+        !c.course.courseNumber.startsWith('SP')
+    );
   }
 }
