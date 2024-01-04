@@ -2,7 +2,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { IUser } from '../users/user.model';
 
 @Component({
-  selector: 'account-menu',
+  selector: 'wb-account-menu',
   styleUrls: ['./account-menu.component.css'],
   template: ` <div class="account">
     <span class="welcome" *ngIf="user">
