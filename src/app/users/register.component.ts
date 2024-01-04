@@ -19,7 +19,7 @@ export class RegisterComponent {
 
   constructor(
     private router: Router,
-    private dataRepository: UserRepositoryService
+    private userRepository: UserRepositoryService
   ) {
     this.firstName = new FormControl('', Validators.required);
     this.lastName = new FormControl('', Validators.required);
@@ -36,7 +36,7 @@ export class RegisterComponent {
 
   registerUser(user: IUser) {
     this.saving = true;
-    this.dataRepository.saveUser(user).subscribe({
+    this.userRepository.saveUser(user).subscribe({
       error: () => (this.saving = false),
       complete: () => this.router.navigate(['/catalog']),
     });

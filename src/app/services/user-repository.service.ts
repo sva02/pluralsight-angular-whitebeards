@@ -11,9 +11,7 @@ export class UserRepositoryService {
 
   saveUser(user: IUser): Observable<any> {
     let classes = user.classes || [];
-    if (this.currentUser) {
-      this.currentUser = { ...this.currentUser, classes: classes };
-    }
+    this.currentUser = { ...user, classes: classes };
 
     return timer(1000);
   }
